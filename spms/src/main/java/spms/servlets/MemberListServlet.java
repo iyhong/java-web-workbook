@@ -29,8 +29,8 @@ public class MemberListServlet extends HttpServlet {
 		Connection conn = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
-		final int pagePerRow = 3;	// 페이지당 몇개 row 보여줄지 정하는 변수
-		final int groupPagePer = 5;	//그룹페이지를 몇개로 할지.. 페이지 보여줄 숫자 몇개로 할지..5개씩 또는 10개씩
+		final int pagePerRow = 5;	// 페이지당 몇개 row 보여줄지 정하는 변수
+		final int groupPagePer = 10;	//그룹페이지를 몇개로 할지.. 페이지 보여줄 숫자 몇개로 할지..5개씩 또는 10개씩
 		int currentPage = 1;	//현재페이지는 초기값은 1페이지
 		if(request.getParameter("currentPage") != null){	//currentpage 를 get 방식으로 받으면
 			currentPage = Integer.parseInt(request.getParameter("currentPage"));	//currentPage에 전송받은 현재페이지값을 대입한다.
@@ -64,17 +64,36 @@ public class MemberListServlet extends HttpServlet {
 							.setCreatedDate(rs.getDate("CRE_DATE"))	);
 			}
 			
+			System.out.println("currentPage : "+currentPage);
+			
+			int startPage = ((currentPage - 1) / groupPagePer) * groupPagePer + 1;
+			System.out.println("statpage : " + startPage);
+
+			int lastPage = totalCount / pagePerRow;
+			if (totalCount % pagePerRow != 0) {
+				lastPage++;
+			}
+			System.out.println("lastPage : " + lastPage);
+			int endPage = startPage + groupPagePer - 1;
+			if (endPage > lastPage) {
+				endPage = lastPage;
+			}
+			System.out.println("endPage : " + endPage);
+
 			// request에 회원 목록 데이터 보관한다.
+			//request.setAttribute("pagePerRow", pagePerRow);
 			request.setAttribute("members", members);
 			request.setAttribute("totalCount", totalCount);
-			request.setAttribute("pagePerRow", pagePerRow);
 			request.setAttribute("groupPagePer", groupPagePer);
 			request.setAttribute("currentPage", currentPage);
-			
+			request.setAttribute("startPage", startPage);
+			request.setAttribute("lastPage", lastPage);
+			request.setAttribute("endPage", endPage);
+
 			// JSP로 출력을 위임한다.
 			RequestDispatcher rd = request.getRequestDispatcher("/member/MemberList.jsp");
 			rd.include(request, response);
-			
+
 		} catch (Exception e) {
 			e.printStackTrace();
 			request.setAttribute("error", e);
