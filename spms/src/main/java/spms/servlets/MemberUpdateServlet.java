@@ -46,7 +46,6 @@ public class MemberUpdateServlet extends HttpServlet {
 			} else {
 				throw new Exception("해당 번호의 회원을 찾을 수 없습니다.");
 			}
-			
 			RequestDispatcher rd = request.getRequestDispatcher(
 					"/member/MemberUpdateForm.jsp");
 			rd.forward(request, response);
