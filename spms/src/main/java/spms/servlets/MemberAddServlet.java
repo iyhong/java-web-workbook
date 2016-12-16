@@ -12,6 +12,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import spms.dao.MemberDao;
+import spms.vo.Member;
+
 // JSP 적용
 // - 입력폼 및 오류 처리 
 @WebServlet("/member/add")
@@ -28,34 +31,31 @@ public class MemberAddServlet extends HttpServlet {
 	}
 	
 	@Override
-	protected void doPost(
-			HttpServletRequest request, HttpServletResponse response)
-			throws ServletException, IOException {
-		Connection conn = null;
-		PreparedStatement stmt = null;
-
-		try {
+	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		try{
 			ServletContext sc = this.getServletContext();
-			conn = (Connection) sc.getAttribute("conn");  
-			stmt = conn.prepareStatement(
-					"INSERT INTO MEMBERS(EMAIL,PWD,MNAME,CRE_DATE,MOD_DATE)"
-					+ " VALUES (?,?,?,NOW(),NOW())");
-			stmt.setString(1, request.getParameter("email"));
-			stmt.setString(2, request.getParameter("password"));
-			stmt.setString(3, request.getParameter("name"));
-			stmt.executeUpdate();
+			Connection connection = (Connection) sc.getAttribute("conn");
+			int rowCount = 0;
 			
-			response.sendRedirect("list");
+			Member member = new Member();
+			member.setEmail(request.getParameter("email"));
+			member.setPassword(request.getParameter("password"));
+			member.setName(request.getParameter("name"));
 			
-		} catch (Exception e) {
-			e.printStackTrace();
+			MemberDao memberDao = new MemberDao();
+			memberDao.setConnection(connection);
+			rowCount = memberDao.insert(member);
+			if(rowCount != 0){
+				System.out.print("등록성공");
+				response.sendRedirect("list");
+			}else{
+				System.out.print("등록실패");
+			}
+			
+		}catch(Exception e){
 			request.setAttribute("error", e);
 			RequestDispatcher rd = request.getRequestDispatcher("/Error.jsp");
 			rd.forward(request, response);
-			
-		} finally {
-			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			//try {if (conn != null) conn.close();} catch(Exception e) {}
 		}
 	}
 }
