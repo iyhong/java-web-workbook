@@ -131,5 +131,22 @@ public class MemberDao {
 		return rowCount;
 	}
 	
-	
+	//한명의 회원정보 삭제메서드
+	public int delete (int no) throws Exception {
+		Statement stmt = null;
+		int rowCount = 0;
+		try{
+			stmt = connection.createStatement();
+			rowCount = stmt.executeUpdate(
+					"DELETE FROM MEMBERS WHERE MNO=" + 
+					no);
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try {if (stmt != null) stmt.close();} catch(Exception e) {}
+
+		}
+		return rowCount;
+	}
 }
