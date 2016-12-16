@@ -17,6 +17,7 @@ public class MemberDao {
 		this.connection = connection;
 	}
 	
+	//전체 회원 리스트 메서드
 	public List<Member> selectList() throws Exception{
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -53,6 +54,7 @@ public class MemberDao {
 		
 	}
 	
+	//회원 등록 메서드
 	public int insert(Member member) throws Exception{
 		System.out.println("MemberDao insert() 호출");
 		PreparedStatement stmt = null;
@@ -73,4 +75,61 @@ public class MemberDao {
 		}
 		return rowCount;
 	}
+	
+	//한명의 회원정보 조회 메서드
+	public Member selectOne(int no) throws Exception{
+		System.out.println("MemberDao selectOne() 호출");
+
+		Member member;
+		Statement stmt = null;
+		ResultSet rs = null;
+		try{
+			stmt = connection.createStatement();
+			rs = stmt.executeQuery(
+				"SELECT MNO,EMAIL,MNAME,CRE_DATE FROM MEMBERS" + 
+				" WHERE MNO=" + no);	
+			if (rs.next()) {
+				member = new Member()
+						.setNo(rs.getInt("MNO"))
+						.setEmail(rs.getString("EMAIL"))
+						.setName(rs.getString("MNAME"))
+						.setCreatedDate(rs.getDate("CRE_DATE"));
+				
+			} else {
+				throw new Exception("해당 번호의 회원을 찾을 수 없습니다.");
+			}
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try {if (rs != null) rs.close();} catch(Exception e) {}
+			try {if (stmt != null) stmt.close();} catch(Exception e) {}
+		}
+		return member;
+	}
+	
+	//한명의 회원정보 수정 메서드
+	public int update(Member member) throws Exception{
+		System.out.println("MemberDao update() 호출");
+
+		PreparedStatement stmt = null;
+		int rowCount = 0;
+		
+		try{
+			stmt = connection.prepareStatement(
+					"UPDATE MEMBERS SET EMAIL=?,MNAME=?,MOD_DATE=now()"
+					+ " WHERE MNO=?");
+			stmt.setString(1, member.getEmail());
+			stmt.setString(2, member.getName());
+			stmt.setInt(3, member.getNo());
+			rowCount = stmt.executeUpdate();
+			
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try {if (stmt != null) stmt.close();} catch(Exception e) {}
+		}
+		return rowCount;
+	}
+	
+	
 }
