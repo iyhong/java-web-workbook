@@ -133,6 +133,7 @@ public class MemberDao {
 	
 	//한명의 회원정보 삭제메서드
 	public int delete (int no) throws Exception {
+		System.out.println("MemberDao delete() 호출");
 		Statement stmt = null;
 		int rowCount = 0;
 		try{
@@ -148,5 +149,36 @@ public class MemberDao {
 
 		}
 		return rowCount;
+	}
+	
+	//로그인 체크 메서드
+	public Member exist(String email, String password) throws Exception{
+		System.out.println("MemberDao exist() 호출");
+
+		Member member = null;
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+		
+		try{
+			stmt = connection.prepareStatement(
+					"SELECT MNAME,EMAIL FROM MEMBERS"
+					+ " WHERE EMAIL=? AND PWD=?");
+			stmt.setString(1, email);
+			stmt.setString(2, password);
+			System.out.println("MemberDao exist() stmt : "+stmt);
+			rs = stmt.executeQuery();
+			if(rs.next()){
+				System.out.println("MemberDao exist() rs : "+rs);
+				member = new Member();
+				member.setName(rs.getString("mname"));
+				member.setEmail(rs.getString("email"));
+			}
+		}catch(Exception e){
+			throw e;
+		}finally{
+			try {if (rs != null) rs.close();} catch (Exception e) {}
+			try {if (stmt != null) stmt.close();} catch (Exception e) {}
+		}
+		return member;
 	}
 }
