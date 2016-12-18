@@ -15,6 +15,8 @@ public class AppInitServlet extends HttpServlet {
 	public void init(ServletConfig config) throws ServletException {
 		System.out.println("AppInitServlet ¡ÿ∫Ò°¶");
 		super.init(config);
+		System.out.println(config.getInitParameter("name"));
+		
 		try {
 			ServletContext sc = this.getServletContext();
 			Class.forName(sc.getInitParameter("driver"));
