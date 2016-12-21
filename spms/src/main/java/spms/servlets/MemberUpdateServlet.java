@@ -24,14 +24,11 @@ import spms.vo.Member;
 public class MemberUpdateServlet extends HttpServlet {
 	@Override
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)throws ServletException, IOException {
-		Connection connection = null;
 		int no = Integer.parseInt(request.getParameter("no"));
 		Member member;
 		try {
 			ServletContext sc = this.getServletContext();
-			connection = (Connection) sc.getAttribute("conn");   
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(connection);
+			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
 			member = memberDao.selectOne(no);
 			request.setAttribute("member", member);
 			RequestDispatcher rd = request.getRequestDispatcher(

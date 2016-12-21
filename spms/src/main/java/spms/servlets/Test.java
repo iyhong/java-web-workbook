@@ -12,8 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 @WebServlet("/Test")
 public class Test extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		ServletConfig config = getServletConfig();
+		ServletConfig config = this.getServletConfig();
 		System.out.println(config.getInitParameter("name1"));
 	}
-
 }

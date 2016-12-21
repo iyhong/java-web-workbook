@@ -20,6 +20,7 @@
 		<param-name>password</param-name>
 		<param-value>java0000</param-value>
 	</context-param>
+	
 	<filter>
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<filter-class>spms.filters.CharacterEncodingFilter</filter-class>
@@ -32,6 +33,7 @@
 		<filter-name>CharacterEncodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
+	
 	<!-- <servlet>
 		<servlet-name>AppInitServlet</servlet-name>
 		<servlet-class>spms.servlets.AppInitServlet</servlet-class>
@@ -54,6 +56,7 @@
 			<param-value>18</param-value>
 		</init-param>
 	</servlet>
+	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>
 		<welcome-file>index.htm</welcome-file>

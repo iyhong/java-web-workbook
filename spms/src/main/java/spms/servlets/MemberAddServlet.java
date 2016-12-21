@@ -2,7 +2,6 @@ package spms.servlets;
 
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletContext;
@@ -34,7 +33,6 @@ public class MemberAddServlet extends HttpServlet {
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		try{
 			ServletContext sc = this.getServletContext();
-			Connection connection = (Connection) sc.getAttribute("conn");
 			int rowCount = 0;
 			
 			Member member = new Member();
@@ -42,8 +40,7 @@ public class MemberAddServlet extends HttpServlet {
 			member.setPassword(request.getParameter("password"));
 			member.setName(request.getParameter("name"));
 			
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(connection);
+			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
 			rowCount = memberDao.insert(member);
 			if(rowCount != 0){
 				System.out.print("등록성공");

@@ -21,14 +21,11 @@ public class MemberDeleteServlet extends HttpServlet {
 
 	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)	throws ServletException, IOException {
-		Connection connection = null;
 		int no = Integer.parseInt(request.getParameter("no"));
 		int rowCount = 0;
 		try {
 			ServletContext sc = this.getServletContext();
-			connection = (Connection) sc.getAttribute("conn");   
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(connection);
+			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
 			rowCount = memberDao.delete(no);
 			if(rowCount != 0){
 				System.out.println("삭제성공");

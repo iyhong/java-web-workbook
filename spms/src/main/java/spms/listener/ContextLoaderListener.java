@@ -17,6 +17,7 @@ public class ContextLoaderListener implements ServletContextListener {
 	}
 
 	public void contextInitialized(ServletContextEvent sce) {
+		System.out.println("ContextLoaderListener ½ÇÇà");
 		ServletContext sc = sce.getServletContext();
 		
 		try {
