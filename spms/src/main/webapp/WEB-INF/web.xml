@@ -45,7 +45,7 @@
 	</servlet> -->
 	
 	<listener>
-		<listener-class>spms.listener.ContextLoaderListener</listener-class>
+		<listener-class>spms.listeners.ContextLoaderListener</listener-class>
 	</listener>
 	
 	
