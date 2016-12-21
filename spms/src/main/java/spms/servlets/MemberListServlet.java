@@ -30,11 +30,8 @@ public class MemberListServlet extends HttpServlet {
 
 		try {
 			ServletContext sc = this.getServletContext();
-			Connection connection = (Connection) sc.getAttribute("conn");
 			
-			MemberDao memberDao = new MemberDao();
-			//dependency injection 의존성 주입
-			memberDao.setConnection(connection);
+			MemberDao memberDao = (MemberDao) sc.getAttribute("memberDao");
 			List<Member> members = memberDao.selectList();
 			
 			response.setContentType("text/html; charset=UTF-8");
