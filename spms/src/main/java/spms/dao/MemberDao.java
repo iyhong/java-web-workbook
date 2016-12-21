@@ -7,18 +7,17 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-import spms.util.DBConnectionPool;
+import org.apache.commons.dbcp.BasicDataSource;
+
 import spms.vo.Member;
 
 public class MemberDao {
-	DBConnectionPool connPool;;
-
-	public MemberDao() {
-	}
+	BasicDataSource ds;
+	
 
 	//의존성주입 (dependency injection) 작업(필요할때 받겠다)
-	public void setConnPool(DBConnectionPool connPool) {
-		this.connPool = connPool;
+	public void setDs(BasicDataSource ds) {
+		this.ds = ds;
 	}
 	
 	//전체 회원 리스트 메서드
@@ -30,7 +29,7 @@ public class MemberDao {
 		ArrayList<Member> members = new ArrayList<Member>();
 		try {
 			//ServletContext 을 가져올수없음 서블릿만 가능하다..그래서 다른방법으로 함
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(
 					"SELECT MNO,MNAME,EMAIL,CRE_DATE" + 
@@ -55,11 +54,12 @@ public class MemberDao {
 			try {if (rs != null) rs.close();} catch(Exception e) {}
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
 			//try {if (conn != null) conn.close();} catch(Exception e) {}
-			if(connection!=null){connPool.returnConnetion(connection);}
+			if(connection!=null){connection.close();}
 		}
 		return members;
 		
 	}
+
 
 	//회원 등록 메서드
 	public int insert(Member member) throws Exception{
@@ -68,7 +68,7 @@ public class MemberDao {
 		PreparedStatement stmt = null;
 		int rowCount = 0;
 		try{
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.prepareStatement(
 					"INSERT INTO MEMBERS(EMAIL,PWD,MNAME,CRE_DATE,MOD_DATE)"
 					+ " VALUES (?,?,?,NOW(),NOW())");
@@ -81,8 +81,7 @@ public class MemberDao {
 			throw e;
 		}finally{
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			if(connection!=null){connPool.returnConnetion(connection);}
-		}
+			if(connection!=null){connection.close();}		}
 		return rowCount;
 	}
 	
@@ -94,7 +93,7 @@ public class MemberDao {
 		Statement stmt = null;
 		ResultSet rs = null;
 		try{
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(
 				"SELECT MNO,EMAIL,MNAME,CRE_DATE FROM MEMBERS" + 
@@ -114,8 +113,7 @@ public class MemberDao {
 		}finally{
 			try {if (rs != null) rs.close();} catch(Exception e) {}
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			if(connection!=null){connPool.returnConnetion(connection);}
-		}
+			if(connection!=null){connection.close();}		}
 		return member;
 	}
 	
@@ -127,7 +125,7 @@ public class MemberDao {
 		int rowCount = 0;
 		
 		try{
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.prepareStatement(
 					"UPDATE MEMBERS SET EMAIL=?,MNAME=?,MOD_DATE=now()"
 					+ " WHERE MNO=?");
@@ -140,8 +138,7 @@ public class MemberDao {
 			throw e;
 		}finally{
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			if(connection!=null){connPool.returnConnetion(connection);}
-		}
+			if(connection!=null){connection.close();}		}
 		return rowCount;
 	}
 	
@@ -152,7 +149,7 @@ public class MemberDao {
 		Statement stmt = null;
 		int rowCount = 0;
 		try{
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.createStatement();
 			rowCount = stmt.executeUpdate(
 					"DELETE FROM MEMBERS WHERE MNO=" + 
@@ -162,8 +159,7 @@ public class MemberDao {
 			throw e;
 		}finally{
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-			if(connection!=null){connPool.returnConnetion(connection);}
-		}
+			if(connection!=null){connection.close();}		}
 		return rowCount;
 	}
 	
@@ -176,7 +172,7 @@ public class MemberDao {
 		ResultSet rs = null;
 		
 		try{
-			connection = connPool.getConnection();
+			connection = ds.getConnection();
 			stmt = connection.prepareStatement(
 					"SELECT MNAME,EMAIL FROM MEMBERS"
 					+ " WHERE EMAIL=? AND PWD=?");
@@ -195,8 +191,7 @@ public class MemberDao {
 		}finally{
 			try {if (rs != null) rs.close();} catch (Exception e) {}
 			try {if (stmt != null) stmt.close();} catch (Exception e) {}
-			if(connection!=null){connPool.returnConnetion(connection);}
-		}
+			if(connection!=null){connection.close();}		}
 		return member;
 	}
 }

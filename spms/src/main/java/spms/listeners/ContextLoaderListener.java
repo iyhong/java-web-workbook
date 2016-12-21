@@ -1,15 +1,15 @@
 package spms.listeners;
 
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
+import org.apache.commons.dbcp.BasicDataSource;
+
 import spms.dao.MemberDao;
-import spms.util.DBConnectionPool;
 
 public class ContextLoaderListener implements ServletContextListener {
 	private Connection conn;
@@ -26,10 +26,14 @@ public class ContextLoaderListener implements ServletContextListener {
 			String url = sc.getInitParameter("url");
 			String username = sc.getInitParameter("username");
 			String password = sc.getInitParameter("password");
-			DBConnectionPool connPool = new DBConnectionPool(driver, url, username, password);
+			BasicDataSource ds = new BasicDataSource();
+			ds.setDriverClassName(driver);
+			ds.setUrl(url);
+			ds.setUsername(username);
+			ds.setPassword(password);
 			
 			MemberDao memberDao = new MemberDao();
-			memberDao.setConnPool(connPool);
+			memberDao.setDs(ds);
 			sc.setAttribute("memberDao", memberDao);
 
 		} catch (Throwable e) {
