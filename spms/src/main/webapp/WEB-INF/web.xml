@@ -48,6 +48,7 @@
 		<listener-class>spms.listener.ContextLoaderListener</listener-class>
 	</listener>
 	
+	
 	<servlet>
 		<servlet-name>test</servlet-name>
 		<servlet-class>spms.servlets.Test</servlet-class>
@@ -56,6 +57,11 @@
 			<param-value>18</param-value>
 		</init-param>
 	</servlet>
+	
+	<servlet-mapping>
+		<servlet-name>test</servlet-name>
+		<url-pattern>/Test</url-pattern>
+	</servlet-mapping>
 	
 	<welcome-file-list>
 		<welcome-file>index.html</welcome-file>

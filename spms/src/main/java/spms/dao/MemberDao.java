@@ -7,24 +7,30 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import spms.util.DBConnectionPool;
 import spms.vo.Member;
 
 public class MemberDao {
-	Connection connection;
+	DBConnectionPool connPool;;
+
+	public MemberDao() {
+	}
 
 	//의존성주입 (dependency injection) 작업(필요할때 받겠다)
-	public void setConnection(Connection connection) {
-		this.connection = connection;
+	public void setConnPool(DBConnectionPool connPool) {
+		this.connPool = connPool;
 	}
 	
 	//전체 회원 리스트 메서드
 	public List<Member> selectList() throws Exception{
+		Connection connection = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 		System.out.println("MemberDao selectList() 호출");
 		ArrayList<Member> members = new ArrayList<Member>();
 		try {
 			//ServletContext 을 가져올수없음 서블릿만 가능하다..그래서 다른방법으로 함
+			connection = connPool.getConnection();
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(
 					"SELECT MNO,MNAME,EMAIL,CRE_DATE" + 
@@ -49,17 +55,20 @@ public class MemberDao {
 			try {if (rs != null) rs.close();} catch(Exception e) {}
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
 			//try {if (conn != null) conn.close();} catch(Exception e) {}
+			if(connection!=null){connPool.returnConnetion(connection);}
 		}
 		return members;
 		
 	}
-	
+
 	//회원 등록 메서드
 	public int insert(Member member) throws Exception{
 		System.out.println("MemberDao insert() 호출");
+		Connection connection = null;
 		PreparedStatement stmt = null;
 		int rowCount = 0;
 		try{
+			connection = connPool.getConnection();
 			stmt = connection.prepareStatement(
 					"INSERT INTO MEMBERS(EMAIL,PWD,MNAME,CRE_DATE,MOD_DATE)"
 					+ " VALUES (?,?,?,NOW(),NOW())");
@@ -72,6 +81,7 @@ public class MemberDao {
 			throw e;
 		}finally{
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
+			if(connection!=null){connPool.returnConnetion(connection);}
 		}
 		return rowCount;
 	}
@@ -79,11 +89,12 @@ public class MemberDao {
 	//한명의 회원정보 조회 메서드
 	public Member selectOne(int no) throws Exception{
 		System.out.println("MemberDao selectOne() 호출");
-
+		Connection connection = null;
 		Member member;
 		Statement stmt = null;
 		ResultSet rs = null;
 		try{
+			connection = connPool.getConnection();
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(
 				"SELECT MNO,EMAIL,MNAME,CRE_DATE FROM MEMBERS" + 
@@ -103,6 +114,7 @@ public class MemberDao {
 		}finally{
 			try {if (rs != null) rs.close();} catch(Exception e) {}
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
+			if(connection!=null){connPool.returnConnetion(connection);}
 		}
 		return member;
 	}
@@ -110,11 +122,12 @@ public class MemberDao {
 	//한명의 회원정보 수정 메서드
 	public int update(Member member) throws Exception{
 		System.out.println("MemberDao update() 호출");
-
+		Connection connection = null;
 		PreparedStatement stmt = null;
 		int rowCount = 0;
 		
 		try{
+			connection = connPool.getConnection();
 			stmt = connection.prepareStatement(
 					"UPDATE MEMBERS SET EMAIL=?,MNAME=?,MOD_DATE=now()"
 					+ " WHERE MNO=?");
@@ -127,6 +140,7 @@ public class MemberDao {
 			throw e;
 		}finally{
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
+			if(connection!=null){connPool.returnConnetion(connection);}
 		}
 		return rowCount;
 	}
@@ -134,9 +148,11 @@ public class MemberDao {
 	//한명의 회원정보 삭제메서드
 	public int delete (int no) throws Exception {
 		System.out.println("MemberDao delete() 호출");
+		Connection connection = null;
 		Statement stmt = null;
 		int rowCount = 0;
 		try{
+			connection = connPool.getConnection();
 			stmt = connection.createStatement();
 			rowCount = stmt.executeUpdate(
 					"DELETE FROM MEMBERS WHERE MNO=" + 
@@ -146,7 +162,7 @@ public class MemberDao {
 			throw e;
 		}finally{
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
-
+			if(connection!=null){connPool.returnConnetion(connection);}
 		}
 		return rowCount;
 	}
@@ -154,12 +170,13 @@ public class MemberDao {
 	//로그인 체크 메서드
 	public Member exist(String email, String password) throws Exception{
 		System.out.println("MemberDao exist() 호출");
-
+		Connection connection = null;
 		Member member = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 		
 		try{
+			connection = connPool.getConnection();
 			stmt = connection.prepareStatement(
 					"SELECT MNAME,EMAIL FROM MEMBERS"
 					+ " WHERE EMAIL=? AND PWD=?");
@@ -178,6 +195,7 @@ public class MemberDao {
 		}finally{
 			try {if (rs != null) rs.close();} catch (Exception e) {}
 			try {if (stmt != null) stmt.close();} catch (Exception e) {}
+			if(connection!=null){connPool.returnConnetion(connection);}
 		}
 		return member;
 	}

@@ -1,4 +1,4 @@
-package spms.listener;
+package spms.listeners;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
@@ -9,6 +9,7 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import spms.dao.MemberDao;
+import spms.util.DBConnectionPool;
 
 public class ContextLoaderListener implements ServletContextListener {
 	private Connection conn;
@@ -21,15 +22,14 @@ public class ContextLoaderListener implements ServletContextListener {
 		ServletContext sc = sce.getServletContext();
 		
 		try {
-			Class.forName(sc.getInitParameter("driver"));
-			conn = DriverManager.getConnection(
-					sc.getInitParameter("url"),
-					sc.getInitParameter("username"),
-					sc.getInitParameter("password"));
-			sc.setAttribute("conn", conn);
+			String driver = sc.getInitParameter("driver");
+			String url = sc.getInitParameter("url");
+			String username = sc.getInitParameter("username");
+			String password = sc.getInitParameter("password");
+			DBConnectionPool connPool = new DBConnectionPool(driver, url, username, password);
 			
 			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(conn);
+			memberDao.setConnPool(connPool);
 			sc.setAttribute("memberDao", memberDao);
 
 		} catch (Throwable e) {

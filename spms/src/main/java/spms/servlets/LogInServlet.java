@@ -36,9 +36,7 @@ public class LogInServlet extends HttpServlet {
 		Member member;
 		try {
 			ServletContext sc = this.getServletContext();
-			connection = (Connection) sc.getAttribute("conn");  
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(connection);
+			MemberDao memberDao = (MemberDao)sc.getAttribute("memberDao");
 			member = memberDao.exist(email, password);
 			
 			if (member != null) {

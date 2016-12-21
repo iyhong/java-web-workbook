@@ -45,7 +45,6 @@ public class MemberUpdateServlet extends HttpServlet {
 	
 	@Override
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Connection connection = null;
 		
 		Member member = new Member();
 		member.setNo(Integer.parseInt(request.getParameter("no")));
@@ -54,9 +53,7 @@ public class MemberUpdateServlet extends HttpServlet {
 		
 		try {
 			ServletContext sc = this.getServletContext();
-			connection = (Connection) sc.getAttribute("conn");    
-			MemberDao memberDao = new MemberDao();
-			memberDao.setConnection(connection);
+			MemberDao memberDao = (MemberDao)sc.getAttribute("memberDao");
 			int rowCount = memberDao.update(member);
 			if(rowCount != 0){
 				System.out.println("수정성공");
