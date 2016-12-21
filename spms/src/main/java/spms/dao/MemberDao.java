@@ -15,7 +15,7 @@ public class MemberDao {
 	BasicDataSource ds;
 	
 
-	//의존성주입 (dependency injection) 작업(필요할때 받겠다)
+	//라이브러리를 가져옴
 	public void setDs(BasicDataSource ds) {
 		this.ds = ds;
 	}
@@ -28,7 +28,7 @@ public class MemberDao {
 		System.out.println("MemberDao selectList() 호출");
 		ArrayList<Member> members = new ArrayList<Member>();
 		try {
-			//ServletContext 을 가져올수없음 서블릿만 가능하다..그래서 다른방법으로 함
+			//라이브러리를 통해 커넥션 가져옴
 			connection = ds.getConnection();
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery(
@@ -49,7 +49,6 @@ public class MemberDao {
 			
 		} catch (Exception e) {
 			throw e;
-			
 		} finally {
 			try {if (rs != null) rs.close();} catch(Exception e) {}
 			try {if (stmt != null) stmt.close();} catch(Exception e) {}
